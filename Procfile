@@ -1,1 +1,1 @@
-web: java -jar target/speech-to-text-1.0.0.jar --server.port=5000
+web: java -jar speech-to-text-1.0.0.jar
