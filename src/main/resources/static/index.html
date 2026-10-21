@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VoiceScribe – Multilingual Speech to Text</title>
+  <meta name="description" content="Real-time multilingual speech transcription supporting Hindi, English and more. Save, manage and search your transcriptions."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">🎙️</div>
+      <div>
+        <span class="logo-text">VoiceScribe</span>
+        <span class="logo-sub">Multilingual AI</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" id="navRecord" onclick="showTab('record')">🎤 Record</button>
+      <button class="nav-btn" id="navHistory" onclick="showTab('history')">📋 History</button>
+    </nav>
+  </header>
+
+  <!-- Record Tab -->
+  <main class="main" id="tabRecord">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1 class="hero-title">Speak. Transcribe. <span class="gradient-text">Instantly.</span></h1>
+      <p class="hero-sub">Real-time multilingual transcription — Hindi, English, and beyond</p>
+    </section>
+
+    <!-- Language Selector -->
+    <div class="lang-selector-wrap">
+      <label class="lang-label">🌐 Language Mode</label>
+      <div class="lang-chips" id="langChips">
+        <button class="lang-chip active" data-lang="hi-IN" onclick="selectLang(this,'hi-IN')">🇮🇳 हिंदी + English</button>
+        <button class="lang-chip" data-lang="en-US" onclick="selectLang(this,'en-US')">🇺🇸 English</button>
+        <button class="lang-chip" data-lang="en-IN" onclick="selectLang(this,'en-IN')">🇮🇳 English (India)</button>
+        <button class="lang-chip" data-lang="hi-IN" onclick="selectLang(this,'hi-IN')">🇮🇳 Hindi</button>
+        <button class="lang-chip" data-lang="bn-IN" onclick="selectLang(this,'bn-IN')">🇮🇳 Bengali</button>
+        <button class="lang-chip" data-lang="ta-IN" onclick="selectLang(this,'ta-IN')">🇮🇳 Tamil</button>
+      </div>
+    </div>
+
+    <!-- Visualizer + Controls -->
+    <div class="recorder-card">
+      <!-- Waveform -->
+      <div class="waveform-container">
+        <canvas id="waveformCanvas" width="700" height="80"></canvas>
+        <div class="waveform-idle" id="waveformIdle">
+          <div class="idle-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mic Button -->
+      <div class="mic-area">
+        <button class="mic-btn" id="micBtn" onclick="toggleRecording()">
+          <div class="mic-rings">
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
+          </div>
+          <span class="mic-icon" id="micIcon">🎙️</span>
+        </button>
+        <p class="mic-status" id="micStatus">Click to start recording</p>
+        <div class="recording-badge" id="recordingBadge">
+          <span class="rec-dot"></span> REC
+        </div>
+      </div>
+
+      <!-- Live Text Box -->
+      <div class="live-text-wrap">
+        <div class="live-header">
+          <span class="live-label">
+            <span class="live-dot" id="liveDot"></span>
+            Live Transcription
+          </span>
+          <span class="char-count" id="charCount">0 words</span>
+        </div>
+        <div class="live-text" id="liveText" placeholder="Your words will appear here in real time..."></div>
+        <div class="interim-text" id="interimText"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <input type="text" class="title-input" id="titleInput" placeholder="Give this transcription a title (optional)"/>
+        <div class="btn-row">
+          <button class="btn btn-save" id="saveBtn" onclick="saveTranscription()" disabled>
+            💾 Save
+          </button>
+          <button class="btn btn-clear" onclick="clearText()">🗑️ Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-val" id="statTotal">0</span>
+        <span class="stat-label">Total Saved</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val" id="statWords">0</span>
+        <span class="stat-label">Words Typed</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val" id="statTime">0s</span>
+        <span class="stat-label">Session Time</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- History Tab -->
+  <main class="main hidden" id="tabHistory">
+    <div class="history-header">
+      <h2 class="section-title">📋 Transcription <span class="gradient-text">History</span></h2>
+      <div class="history-actions">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="Search transcriptions..." oninput="searchTranscriptions(this.value)"/>
+        </div>
+        <button class="btn btn-danger-sm" onclick="deleteAllConfirm()">🗑️ Clear All</button>
+      </div>
+    </div>
+
+    <div class="transcriptions-grid" id="transcriptionsGrid">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading transcriptions...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay hidden" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>✏️ Edit Transcription</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editId"/>
+        <label class="form-label">Title</label>
+        <input type="text" class="form-input" id="editTitle" placeholder="Transcription title"/>
+        <label class="form-label">Text</label>
+        <textarea class="form-textarea" id="editText" rows="6" placeholder="Transcription text..."></textarea>
+        <label class="form-label">Language</label>
+        <select class="form-input" id="editLang">
+          <option value="hi-IN">Hindi + English (hi-IN)</option>
+          <option value="en-US">English US (en-US)</option>
+          <option value="en-IN">English India (en-IN)</option>
+          <option value="bn-IN">Bengali (bn-IN)</option>
+          <option value="ta-IN">Tamil (ta-IN)</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-save" onclick="submitEdit()">💾 Save Changes</button>
+        <button class="btn btn-clear" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
