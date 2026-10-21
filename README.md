@@ -1,17 +1,22 @@
-# ??? VoiceScribe – Multilingual Speech to Text
+# ??? VoiceScribe â€“ Multilingual Speech to Text
 
 A real-time multilingual speech transcription web application built with **Java Spring Boot** and vanilla **HTML/CSS/JavaScript**.
 
 ## ?? Features
 
 - **Real-time Transcription** using Browser Web Speech API (Chrome)
-- **Multilingual Support** – Hindi + English (Hinglish), Tamil, Bengali, etc.
-- **Audio Visualizer** – Live waveform while recording
-- **H2 Database** – Persistent storage of all transcriptions
-- **CRUD Dashboard** – Create, Read, Update, Delete transcriptions
-- **Search** – Full-text search across transcriptions
-- **WebSocket** – Real-time sync via STOMP/SockJS
-- **H2 Console** – Browse DB at `/h2-console`
+- **Multilingual Support** â€“ Hindi + English (Hinglish), Tamil, Bengali, etc.
+- **Audio Visualizer** â€“ Live waveform while recording
+- **H2 Database** â€“ Persistent storage of all transcriptions
+- **CRUD Dashboard** â€“ Create, Read, Update, Delete transcriptions
+- **Search** â€“ Full-text search across transcriptions
+- **WebSocket** â€“ Real-time sync via STOMP/SockJS
+- **H2 Console** â€“ Browse DB at `/h2-console`
+
+<img width="1887" height="1073" alt="image" src="https://github.com/user-attachments/assets/f006d1cb-141a-4b14-b2b0-0af642313c72" />
+
+<img width="1917" height="965" alt="image" src="https://github.com/user-attachments/assets/b0b0d808-969f-4fa0-8c16-bc36b5f35b75" />
+
 
 ## ??? Tech Stack
 
@@ -53,20 +58,20 @@ H2 Console: **http://localhost:8080/h2-console**
 ```
 speech-to-text-app/
 +-- src/main/java/com/speechapp/
-¦   +-- SpeechToTextApplication.java   # Entry point
-¦   +-- model/Transcription.java       # JPA Entity
-¦   +-- repository/                    # Spring Data JPA
-¦   +-- service/TranscriptionService.java
-¦   +-- controller/
-¦       +-- TranscriptionController.java  # REST API
-¦       +-- WebSocketController.java      # WS Handler
-¦       +-- WebConfig.java               # STOMP Config
+Â¦   +-- SpeechToTextApplication.java   # Entry point
+Â¦   +-- model/Transcription.java       # JPA Entity
+Â¦   +-- repository/                    # Spring Data JPA
+Â¦   +-- service/TranscriptionService.java
+Â¦   +-- controller/
+Â¦       +-- TranscriptionController.java  # REST API
+Â¦       +-- WebSocketController.java      # WS Handler
+Â¦       +-- WebConfig.java               # STOMP Config
 +-- src/main/resources/
-¦   +-- application.properties
-¦   +-- static/
-¦       +-- index.html
-¦       +-- css/style.css
-¦       +-- js/app.js
+Â¦   +-- application.properties
+Â¦   +-- static/
+Â¦       +-- index.html
+Â¦       +-- css/style.css
+Â¦       +-- js/app.js
 +-- pom.xml
 ```
 
